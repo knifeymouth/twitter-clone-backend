@@ -16,12 +16,14 @@ var MockTweets = []structs.Tweet{
 			Height: 100,
 		},
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	},
 	{
 		Id:        2,
 		UserId:    2,
 		Content:   "Second tweet!",
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	},
 	{
 		Id:      3,
@@ -33,5 +35,6 @@ var MockTweets = []structs.Tweet{
 			Height: 100,
 		},
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	},
 }

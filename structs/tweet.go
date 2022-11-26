@@ -8,6 +8,7 @@ type Tweet struct {
 	Content   string    `json:"content"`
 	Img       Image     `json:"img"`
 	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type Image struct {
