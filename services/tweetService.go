@@ -9,28 +9,23 @@ import (
 
 	"twitter-clone/mocks"
 	"twitter-clone/structs"
+	"twitter-clone/utils"
 )
 
 func GetAllTweets(w http.ResponseWriter) {
-	json.NewEncoder(w).Encode(mocks.MockTweets)
+	utils.CommonResponse(w, 200, "", mocks.MockTweets)
 }
 
 func GetTweet(w http.ResponseWriter, requestId int64) {
 	tweetIndex, err := findTweet(requestId, mocks.MockTweets)
 
 	if err != nil {
-		json.NewEncoder(w).Encode(structs.CommonResponse{
-			Code:    404,
-			Message: err.Error(),
-		})
+		utils.CommonResponse(w, 404, err.Error(), nil)
 		return
 	}
 
 	tweet := mocks.MockTweets[tweetIndex]
-	json.NewEncoder(w).Encode(structs.CommonResponse{
-		Code: 200,
-		Data: tweet,
-	})
+	utils.CommonResponse(w, 200, "", tweet)
 }
 
 func CreateTweet(w http.ResponseWriter, r *http.Request) {
@@ -41,39 +36,29 @@ func CreateTweet(w http.ResponseWriter, r *http.Request) {
 
 	t.Id = int64(id)
 	t.CreatedAt = time.Now()
-	json.NewEncoder(w).Encode(t)
-
 	mocks.MockTweets = append(mocks.MockTweets, t)
+	utils.CommonResponse(w, 201, "", t)
 }
 
 func UpdateTweet(w http.ResponseWriter, r *http.Request) {
 	// get and validate id
 	idString := r.URL.Query().Get("id")
 	if idString == "" {
-		json.NewEncoder(w).Encode(structs.CommonResponse{
-			Code:    404,
-			Message: "id is required",
-		})
+		utils.CommonResponse(w, 404, "id is required", nil)
 		return
 	}
 
 	// convert id into integer and validate
 	requestId, err := strconv.Atoi(idString)
 	if err != nil {
-		json.NewEncoder(w).Encode(structs.CommonResponse{
-			Code:    404,
-			Message: err.Error(),
-		})
+		utils.CommonResponse(w, 404, err.Error(), nil)
 		return
 	}
 
 	// find and validate tweet from tweet data
 	tweetIndex, err := findTweet(int64(requestId), mocks.MockTweets)
 	if err != nil {
-		json.NewEncoder(w).Encode(structs.CommonResponse{
-			Code:    404,
-			Message: err.Error(),
-		})
+		utils.CommonResponse(w, 404, err.Error(), nil)
 		return
 	}
 
@@ -92,10 +77,7 @@ func UpdateTweet(w http.ResponseWriter, r *http.Request) {
 	mocks.MockTweets[tweetIndex] = newTweet
 
 	// return json
-	json.NewEncoder(w).Encode(structs.CommonResponse{
-		Code: 200,
-		Data: newTweet,
-	})
+	utils.CommonResponse(w, 200, "", newTweet)
 }
 
 func findTweet(id int64, tweets []structs.Tweet) (int, error) {
