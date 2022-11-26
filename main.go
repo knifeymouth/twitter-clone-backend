@@ -1,17 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"twitter-clone/mocks"
+	"twitter-clone/controllers"
 )
 
 func main() {
-	http.HandleFunc("/", getAllTweets)
+	http.HandleFunc("/", controllers.Tweet)
 	log.Fatal(http.ListenAndServe(":8080", nil))
-}
-
-func getAllTweets(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(mocks.MockTweets)
 }
