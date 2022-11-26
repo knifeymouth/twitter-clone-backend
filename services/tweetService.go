@@ -13,6 +13,24 @@ func GetAllTweets(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(mocks.MockTweets)
 }
 
+func GetTweet(w http.ResponseWriter, requestId int64) {
+	var tweet structs.Tweet
+
+	for _, value := range mocks.MockTweets {
+		if value.Id == requestId {
+			tweet = value
+			break
+		}
+	}
+
+	if tweet == (structs.Tweet{}) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	json.NewEncoder(w).Encode(tweet)
+}
+
 func CreateTweet(w http.ResponseWriter, r *http.Request) {
 	id := len(mocks.MockTweets)
 
