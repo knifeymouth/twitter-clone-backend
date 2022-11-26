@@ -1,12 +1,17 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
-
-	"twitter-clone/mocks"
+	"twitter-clone/services"
 )
 
 func Tweet(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(mocks.MockTweets)
+	switch r.Method {
+	case "GET":
+		services.GetAllTweets(w)
+
+	case "POST":
+		services.CreateTweet(w, r)
+	}
+
 }
