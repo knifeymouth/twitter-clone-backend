@@ -44,14 +44,14 @@ func UpdateTweet(w http.ResponseWriter, r *http.Request) {
 	// get and validate id
 	idString := r.URL.Query().Get("id")
 	if idString == "" {
-		utils.CommonResponse(w, 404, "id is required", nil)
+		utils.CommonResponse(w, 400, "id is required", nil)
 		return
 	}
 
 	// convert id into integer and validate
 	requestId, err := strconv.Atoi(idString)
 	if err != nil {
-		utils.CommonResponse(w, 404, err.Error(), nil)
+		utils.CommonResponse(w, 500, err.Error(), nil)
 		return
 	}
 
@@ -78,6 +78,34 @@ func UpdateTweet(w http.ResponseWriter, r *http.Request) {
 
 	// return json
 	utils.CommonResponse(w, 200, "", newTweet)
+}
+
+func DeleteTweet(w http.ResponseWriter, r *http.Request) {
+	idString := r.URL.Query().Get("id")
+
+	if idString == "" {
+		utils.CommonResponse(w, 400, "id is required", nil)
+		return
+	}
+
+	requestId, err := strconv.Atoi(idString)
+
+	if err != nil {
+		utils.CommonResponse(w, 500, err.Error(), nil)
+		return
+	}
+
+	tweetIndex, err := findTweet(int64(requestId), mocks.MockTweets)
+
+	if err != nil {
+		utils.CommonResponse(w, 404, err.Error(), nil)
+		return
+	}
+
+	tweet := mocks.MockTweets[tweetIndex]
+
+	mocks.MockTweets = append(mocks.MockTweets[:tweetIndex], mocks.MockTweets[(tweetIndex+1):]...)
+	utils.CommonResponse(w, 200, "", tweet)
 }
 
 func findTweet(id int64, tweets []structs.Tweet) (int, error) {

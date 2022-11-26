@@ -29,6 +29,9 @@ func Tweet(w http.ResponseWriter, r *http.Request) {
 
 	case "PUT":
 		services.UpdateTweet(w, r)
+
+	case "DELETE":
+		services.DeleteTweet(w, r)
 	}
 
 }
