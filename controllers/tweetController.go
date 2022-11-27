@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"twitter-clone/services"
+	"twitter-clone/utils"
 )
 
 func Tweet(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +33,10 @@ func Tweet(w http.ResponseWriter, r *http.Request) {
 
 	case "DELETE":
 		services.DeleteTweet(w, r)
+
+	default:
+		code := http.StatusMethodNotAllowed
+		utils.CommonResponse(w, code, http.StatusText(code), nil)
 	}
 
 }
