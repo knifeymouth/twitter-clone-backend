@@ -13,19 +13,19 @@ import (
 )
 
 func GetAllTweets(w http.ResponseWriter) {
-	utils.CommonResponse(w, 200, "", mocks.MockTweets)
+	utils.CommonResponse(w, http.StatusOK, "", mocks.MockTweets)
 }
 
 func GetTweet(w http.ResponseWriter, requestId int64) {
 	tweetIndex, err := findTweet(requestId, mocks.MockTweets)
 
 	if err != nil {
-		utils.CommonResponse(w, 404, err.Error(), nil)
+		utils.CommonResponse(w, http.StatusNotFound, err.Error(), nil)
 		return
 	}
 
 	tweet := mocks.MockTweets[tweetIndex]
-	utils.CommonResponse(w, 200, "", tweet)
+	utils.CommonResponse(w, http.StatusOK, "", tweet)
 }
 
 func CreateTweet(w http.ResponseWriter, r *http.Request) {
@@ -37,28 +37,28 @@ func CreateTweet(w http.ResponseWriter, r *http.Request) {
 	t.Id = int64(id)
 	t.CreatedAt = time.Now()
 	mocks.MockTweets = append(mocks.MockTweets, t)
-	utils.CommonResponse(w, 201, "", t)
+	utils.CommonResponse(w, http.StatusCreated, "", t)
 }
 
 func UpdateTweet(w http.ResponseWriter, r *http.Request) {
 	// get and validate id
 	idString := r.URL.Query().Get("id")
 	if idString == "" {
-		utils.CommonResponse(w, 400, "id is required", nil)
+		utils.CommonResponse(w, http.StatusBadRequest, http.StatusText(http.StatusBadRequest)+": id is required", nil)
 		return
 	}
 
 	// convert id into integer and validate
 	requestId, err := strconv.Atoi(idString)
 	if err != nil {
-		utils.CommonResponse(w, 500, err.Error(), nil)
+		utils.CommonResponse(w, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
 
 	// find and validate tweet from tweet data
 	tweetIndex, err := findTweet(int64(requestId), mocks.MockTweets)
 	if err != nil {
-		utils.CommonResponse(w, 404, err.Error(), nil)
+		utils.CommonResponse(w, http.StatusNotFound, err.Error(), nil)
 		return
 	}
 
@@ -77,35 +77,35 @@ func UpdateTweet(w http.ResponseWriter, r *http.Request) {
 	mocks.MockTweets[tweetIndex] = newTweet
 
 	// return json
-	utils.CommonResponse(w, 200, "", newTweet)
+	utils.CommonResponse(w, http.StatusOK, "", newTweet)
 }
 
 func DeleteTweet(w http.ResponseWriter, r *http.Request) {
 	idString := r.URL.Query().Get("id")
 
 	if idString == "" {
-		utils.CommonResponse(w, 400, "id is required", nil)
+		utils.CommonResponse(w, http.StatusBadRequest, http.StatusText(http.StatusBadRequest)+": id is required", nil)
 		return
 	}
 
 	requestId, err := strconv.Atoi(idString)
 
 	if err != nil {
-		utils.CommonResponse(w, 500, err.Error(), nil)
+		utils.CommonResponse(w, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
 
 	tweetIndex, err := findTweet(int64(requestId), mocks.MockTweets)
 
 	if err != nil {
-		utils.CommonResponse(w, 404, err.Error(), nil)
+		utils.CommonResponse(w, http.StatusNotFound, err.Error(), nil)
 		return
 	}
 
 	tweet := mocks.MockTweets[tweetIndex]
 
 	mocks.MockTweets = append(mocks.MockTweets[:tweetIndex], mocks.MockTweets[(tweetIndex+1):]...)
-	utils.CommonResponse(w, 200, "", tweet)
+	utils.CommonResponse(w, http.StatusOK, "", tweet)
 }
 
 func findTweet(id int64, tweets []structs.Tweet) (int, error) {
